@@ -1,0 +1,99 @@
+<?php if(empty($vksite)){$vksite='http://www.videodelisi.org/';}ob_start();@require("../rigoBotsistem/pages/ayarlar.php"); ob_start();require("../rigoBotsistem/pages/mobil.php"); if (!class_exists('MyClass')) { require("../rigoBotsistem/pages/aes.php"); $sifrele=new AesCtr(); $sifrele->adaminkeyi=$adaminkeyi; $sifrele->encrypt("aa",$adaminkeyi,256); } $detect = new Mobile_Detect; $deviceType = ($detect->isMobile() ? ($detect->isTablet() ? 'phone' : 'phone') : 'computer'); if($videoHavuz){ $cek=@mysql_fetch_array(mysql_query("select * from rigo_havuz where videoStatus=1 order by rand() limit 1")); $videoID=$cek[videoEmbed].'?havuz=true';	 $image=$cek[videoImage];	 $videogoster=true; $tip="iframe";  }else{ $data=$_GET['videodata']; $datacoz=json_decode($sifrele->decrypt(base64_decode($data),$adaminkeyi,256),true); if(count($eskiadamkey) and !$datacoz['bot']){ 	foreach($eskiadamkey as $amkkey){ 	$datacoz=json_decode($sifrele->decrypt(base64_decode($data),$amkkey,256),true); 	if($datacoz['bot']){break;}	 	} }  
+if(!$datacoz['bot']){exit;} $bot=$datacoz['bot']; $videoID=$datacoz['video']; $videogoster=false;;  if($bot=="vk"){ $videoID=str_replace('http://vk.com/',$vksite,$videoID);$videoID=str_replace('https://vk.com/',$vksite,$videoID);$videogoster=true; $videoID=str_replace('http://www.vk.com/',$vksite,$videoID);$tip="iframe"; }
+if($bot=="xhamster"){ $videogoster=true; $videoID="https://www.mobileonlineporno.com/player/xh/".$videoID.".html";$tip="iframe"; } if($bot=="redtube"){ $videogoster=true; $tip="video"; $gir=videover($videoID,"redtube"); preg_match('|<video>(.*)</video>|',$gir,$ver); $videoID=$ver[1];preg_match('|<mobil>(.*)</mobil>|',$gir,$ver); $mobilID=$ver[1]; preg_match('|<image>(.*)</image>|',$gir,$ver); $image=$ver[1]; $startparam="start"; }
+
+
+
+if($bot=="porn"){ $videogoster=true; $tip="video"; $gir=videover($videoID,"porn"); preg_match('|<video>(.*)</video>|',$gir,$ver); $videoID=$ver[1];preg_match('|<mobil>(.*)</mobil>|',$gir,$ver); $mobilID=$ver[1]; preg_match('|<image>(.*)</image>|',$gir,$ver); $image=$ver[1]; $startparam="start"; }
+
+if($bot=="pornhub"){ $videogoster=true; $tip="video"; $gir=videover($videoID,"pornhub"); preg_match('|<video>(.*)</video>|',$gir,$ver); $videoID=$ver[1]; preg_match('|<mobil>(.*)</mobil>|',$gir,$ver); $mobilID=$ver[1];preg_match('|<image>(.*)</image>|',$gir,$ver); $image=$ver[1]; $startparam="ms"; }
+if($bot=="yobt"){ $videogoster=true; $tip="video"; $gir=videover($videoID,"yobt"); preg_match('|<video>(.*)</video>|',$gir,$ver); $videoID=$ver[1]; preg_match('|<mobil>(.*)</mobil>|',$gir,$ver); $mobilID=$ver[1];preg_match('|<image>(.*)</image>|',$gir,$ver); $image=$ver[1]; $startparam="start"; }
+
+if(!empty($bot) and !empty($videoID) and $videogoster!=true){ 
+$videogoster=true; $gir=videover($videoID,$bot); preg_match('|<video>(.*)</video>|',$gir,$ver); $videoID=$ver[1];preg_match('|<mobil>(.*)</mobil>|',$gir,$ver); $mobilID=$ver[1]; preg_match('|<image>(.*)</image>|',$gir,$ver); $image=$ver[1];preg_match('|<startparam>(.*)</startparam>|',$gir,$ver); $startparam=$ver[1]; preg_match('|<tip>(.*)</tip>|',$gir,$ver); $tip=$ver[1]; }
+
+
+
+} 
+
+
+
+
+
+$yonlendir=$_GET['yonlendir'];
+
+//if(strpos(strtolower($_SERVER['HTTP_REFERER']),".swf")!==false){$yonlendir=true;}
+//$yonlendir=true;
+
+if($yonlendir){
+
+
+if($bot=="vk"){
+	
+$girmek=baglanyenisis($videoID);
+$bolx=explode('var vars =',$girmek);
+$bolx=explode('var',$bolx[1]);
+$data=json_decode(trim($bolx[0]));
+
+
+if(isset($data->url720)){
+$videoID=$data->url720;
+}elseif(isset($data->url480)){
+$videoID=$data->url480;
+}elseif(isset($data->url360)){
+$videoID=$data->url360;
+}elseif(isset($data->url240)){
+$videoID=$data->url240;
+}
+
+if(isset($data->cache360)){
+$mobilID=$data->cache360;
+}elseif(isset($data->cache240)){
+$mobilID=$data->cache240;
+}elseif(isset($data->url360)){
+$mobilID=$data->url360;
+}elseif(isset($data->url240)){
+$mobilID=$data->url240;
+}
+$startparam="start";
+$videogoster=true; $tip="video";	
+}
+
+
+
+$dbilgi=parse_url($_SERVER['HTTP_REFERER']);
+
+$start=$_GET['start'];
+
+if(strpos($start,".")){$xe=explode('.',$start);$start=$xe[0];}
+
+if(($start)>1){
+
+$start="&ec_seek=".$start."&ms=".$start."&start=".$start."&";	
+
+}else{$start="";}
+
+if($videoID){
+
+if($deviceType=="phone"){$videoID=$mobilID;}
+
+ob_start();
+
+header("location: ".$videoID.$start);
+
+}elseif(BOZUK_VIDEO){
+
+header("location: ".BOZUK_VIDEO.$start);
+
+}
+
+exit;
+
+}
+//$videoID="http://im.1f03e600.f132a15.cdn2b.movies.mxn.com/1/1680/1680641/NOWATERMARK_500.mp4?s=1414709410&e=1414716610&h=8757ada24d561039d4e54148f6e81033";
+
+$type="video";
+
+
+
+if(!$videogoster and file_exists("digerbotlar.php")){require("digerbotlar.php");}  if(!$videogoster){exit;} ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml"> <head> <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> <title>Rigobert Video Sistem</title> <meta name="robots" content="noindex">	 <meta name="googlebot" content="noindex"> <style type="text/css"> embed{ 	position:absolute; 	height:100%; 	width:100%; 	top:0px; 	left:0px; } video{ 	position:absolute; 	height:100%; 	width:100%; 	top:0px; 	left:0px; } iframe{ 	position:absolute; 	height:100%; 	width:100%; 	top:0px; 	left:0px; }    </style> </head> <?php if($tip=="iframe"){include("iframeyapi.php");}?> <?php if($tip=="video"){ if($deviceType=="phone"){ include("mobileyapi.php"); }else{	 include('embedyapi.php'); }}?> <body> </body> </html>

@@ -1,0 +1,221 @@
+<?php
+require("pages/header.php");
+require("pages/sidebarleft.php");
+echo '<div id="content" class="span10">
+			<!-- content starts -->
+			
+<div class="row-fluid">
+				<div class="box span12">
+					<div class="box-header well">
+						<h2><i class="icon-info-sign"></i> '.$lang["hosgeldiniz"].'</h2>
+					</div>
+					<div class="box-content">
+						'.$lang["karsilamaMesaj"].'
+						
+						
+						<div class="clearfix"></div>
+					</div>
+				</div>
+			</div>';
+$amksi="";
+	$duzenUyecek=@mysql_fetch_array(mysql_query("select * from rigo_ayar where ayarID='1'"));
+	$wordpressbilgi=@json_decode(base64_decode($duzenUyecek['wordpressayarlar']));
+	
+
+
+	$tumilanlar=json_decode(file_get_contents("http://resul2.ytkazan.com/ilanlar.php?lang=".$dil));
+	$panelilan1=array();
+	$panelilan2=array();
+	$panelilan3=array();
+	if(isset($tumilanlar)){
+		$i=1;
+		foreach($tumilanlar as $ilanlar){
+			if($i==1){$panelilan1[]=$ilanlar;}
+			if($i==2){$panelilan2[]=$ilanlar;}
+			if($i==3){$panelilan3[]=$ilanlar;}
+			$i++;
+			if($i==4){$i=1;}	
+		}
+		
+	}
+
+
+if(isset($panelilan1)){
+echo '<div class="row-fluid">
+<div class="box span4">
+<div class="box-inner">
+<div class="box-header well">
+<h2><i class="glyphicon glyphicon-bullhorn"></i> '.$lang["ilanlar"].'</h2>
+</div>
+<div class="box-content alerts">';
+foreach($panelilan1 as $ilanlarim){
+echo '
+<div class="alert alert-success">
+<a href="" class="btn btn-default btn-lg btn-setting" data-target="ilan'.md5($ilanlarim->baslik).'"><i class="glyphicon glyphicon-chevron-left glyphicon-white"></i> '.$ilanlarim->baslik.'</a>
+';
+
+$amksi.='<div class="modal fade" id="ilan'.md5($ilanlarim->baslik).'" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal">×</button>
+<h3>'.$ilanlarim->baslik.'</h3>
+</div>
+<div class="modal-body">
+<p>'.$ilanlarim->aciklama.'</p>
+</div>
+<div class="modal-footer">
+<a href="#" class="btn btn-default" data-dismiss="modal">Close</a>
+<a href="'.$ilanlarim->link.'" class="btn btn-primary" target="_blank">Go Site</a>
+</div>
+</div>
+</div>
+</div>';
+echo '</div>';
+}echo '</div>
+</div>
+</div>
+'; }
+
+
+if(isset($panelilan2)){
+echo '<div class="row-fluid">
+<div class="box span4">
+<div class="box-inner">
+<div class="box-header well">
+<h2><i class="glyphicon glyphicon-bullhorn"></i> '.$lang["ilanlar"].'</h2>
+</div>
+<div class="box-content alerts">';
+foreach($panelilan2 as $ilanlarim){
+echo '
+<div class="alert alert-success">
+<a href="" class="btn btn-default btn-lg btn-setting" data-target="ilan'.md5($ilanlarim->baslik).'"><i class="glyphicon glyphicon-chevron-left glyphicon-white"></i> '.$ilanlarim->baslik.'</a>
+';
+
+$amksi.='<div class="modal fade" id="ilan'.md5($ilanlarim->baslik).'" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal">×</button>
+<h3>'.$ilanlarim->baslik.'</h3>
+</div>
+<div class="modal-body">
+<p>'.$ilanlarim->aciklama.'</p>
+</div>
+<div class="modal-footer">
+<a href="#" class="btn btn-default" data-dismiss="modal">Close</a>
+<a href="'.$ilanlarim->link.'" class="btn btn-primary" target="_blank">Go Site</a>
+</div>
+</div>
+</div>
+</div>';
+echo '</div>';
+}echo '</div>
+</div>
+</div>
+'; }
+
+
+if(isset($panelilan3)){
+echo '<div class="row-fluid">
+<div class="box span4">
+<div class="box-inner">
+<div class="box-header well">
+<h2><i class="glyphicon glyphicon-bullhorn"></i> '.$lang["ilanlar"].'</h2>
+</div>
+<div class="box-content alerts">';
+foreach($panelilan3 as $ilanlarim){
+echo '
+<div class="alert alert-success">
+<a href="" class="btn btn-default btn-lg btn-setting" data-target="ilan'.md5($ilanlarim->baslik).'"><i class="glyphicon glyphicon-chevron-left glyphicon-white"></i> '.$ilanlarim->baslik.'</a>
+';
+
+$amksi.='<div class="modal fade" id="ilan'.md5($ilanlarim->baslik).'" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal">×</button>
+<h3>'.$ilanlarim->baslik.'</h3>
+</div>
+<div class="modal-body">
+<p>'.$ilanlarim->aciklama.'</p>
+</div>
+<div class="modal-footer">
+<a href="#" class="btn btn-default" data-dismiss="modal">Close</a>
+<a href="'.$ilanlarim->link.'" class="btn btn-primary" target="_blank">Go Site</a>
+</div>
+</div>
+</div>
+</div>';
+echo '</div>';
+}echo '</div>
+</div>
+</div>
+'; }
+
+
+
+
+
+
+ ?>
+</div>
+<?php echo $amksi;?>
+
+			<div class="row-fluid sortable">		
+				<div class="box span12">
+					<div class="box-header well" data-original-title>
+						<h2><i class="icon-user"></i> <?php echo $lang["ilanlar"];?></h2>
+						<div class="box-icon">
+							<a href="#" class="btn btn-minimize btn-round"><i class="icon-chevron-up"></i></a>
+							<a href="#" class="btn btn-close btn-round"><i class="icon-remove"></i></a>
+						</div>
+					</div>
+					<div class="box-content">
+						<table class="table table-striped table-bordered bootstrap-datatable datatable">
+						  <thead>
+							  <tr>
+								  <th><?php echo $lang["uyeAdi"];?></th>
+								  <th><?php echo $lang["uyeToplamvideo"];?></th>
+								  <th><?php echo $lang["uyeTuru"];?></th>
+								  <th><?php echo $lang["uyeDurum"];?></th>
+								  <th><?php echo $lang["uyeIslemler"];?></th>
+							  </tr>
+						  </thead>   
+						  <tbody>
+						  <?php 
+						  $uyesor=mysql_query("select * from rigo_users");
+						  while($uye_cek=mysql_fetch_array($uyesor)){
+						  ?>
+							<tr>
+								<td><?php echo $uye_cek['userName'];?></td>
+								<td class="center"><?php echo $uye_cek['userPosts'];?></td>
+								<td class="center"><?php if($uye_cek['userRole']==1){echo $lang["uyeAdmin"];}else{echo $lang["uyeEditor"];}?></td>
+								<td class="center"><?php if($uye_cek['userStatus']==1){echo $lang["aktif"];}else{echo $lang["pasif"];}?></td>
+								<td class="center">
+									<a class="btn btn-info" href="uyeler.php?islem=uyeduzenle&ID=<?=$uye_cek['userID']?>"><i class="icon-edit icon-white"></i><?php echo $lang["duzenle"];?></a>
+									<a class="btn btn-danger" href="uyeler.php?islem=uyesil&ID=<?=$uye_cek['userID']?>"><i class="icon-trash icon-white"></i><?php echo $lang["sil"];?></a>
+                                    
+								</td>
+							</tr>
+							
+							<?php }?>
+						  </tbody>
+					  </table>            
+					</div>
+				</div><!--/span-->
+			
+			</div><!--/row-->
+
+	<!-- content ends -->
+    
+			</div><!--/#content.span10-->
+				
+                
+                </div><!--/fluid-row-->
+                
+				
+		<hr>
+<?php
+require("pages/footer.php");
+?>
